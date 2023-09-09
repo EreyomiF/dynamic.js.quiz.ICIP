@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavaScript Quiz</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .quiz-container {
+            max-width: 100%; /* Adjust the maximum width as needed */
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+        .question {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+        .options {
+            text-align: left; /* Align options to the left */
+            margin-bottom: 30px; /* Add spacing to the bottom of options */
+        }
+
+        .options label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .result {
+            font-size: 20px;
+            margin-top: 20px;
+            text-align: center;
+            margin-bottom: 20px; /* Add spacing to the bottom of the result */
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+        /* Button styles */
+        .btn {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #007bff; /* Bootstrap blue color */
+            color: #fff; /* White text color */
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .btn:hover {
+            background-color: #0056b3; /* Darker blue color on hover */
+        }
+        /* Style for Submit button specifically */
+        #submit-btn {
+            background-color: #28a745; /* Bootstrap green color for submit button */
+        }
+        #submit-btn:hover {
+            background-color: #1a732e; /* Darker green color on hover */
+        }
+
+        /* Dismiss button style */
+        .dismiss-btn {
+            background-color: #dc3545; /* Bootstrap red color for dismiss button */
+            color: #fff; /* White text color */
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            padding: 5px 10px;
+            margin-top: 10px;
+        }
+        .dismiss-btn:hover {
+            background-color: #bb2d3b; /* Darker red color on hover */
+        }
+
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <h2>JavaScript Quiz</h2>
+        <p class="question" id="question">Question goes here</p>
+        <div class="options" id="options">
+            <!-- Options will be inserted here dynamically -->
+        </div>
+        <button id="next-btn" class="btn">Next</button>
+        <button id="submit-btn" class="btn">Submit</button>
+    </div>
+
+    <div class="modal" id="result-modal">
+        <div class="modal-content">
+            <h2>Quiz Result</h2>
+            <p class="result" id="result"></p>
+            <button class="dismiss-btn" id="dismiss-btn">Dismiss</button>
+        </div>
+    </div>
+
+    <script>
+        const quizData = [
+            {
+                question: "What is JavaScript?",
+                options: ["1. A programming language", "2. A type of coffee", "3. A car brand"],
+                answer: 0
+            },
+            {
+                question: "What is the capital of France?",
+                options: ["1. Berlin", "2. Madrid", "3. Paris"],
+                answer: 2
+            },
+            {
+                question: "Which programming language is used for web development?",
+                options: ["1. Java", "2. Python", "3. JavaScript"],
+                answer: 2
+            },
+            {
+        question: "What does HTML stand for?",
+        options: ["1. Hyperlink and Text Markup Language", "2. Hyper Text Markup Language", "3. Highly Typed Multi-Language"],
+        answer: 2 // Correct answer is "2. Hyper Text Markup Language"
+    },
+    {
+        question: "Which of the following is a JavaScript data type?",
+        options: ["1. Float", "2. Boolean", "3. Stringify"],
+        answer: 2 // Correct answer is "2. Boolean"
+    },
+    {
+        question: "What does HTML stand for?",
+        options: ["1. Hyperlink and Text Markup Language", "2. Hyper Text Markup Language", "3. Highly Typed Multi-Language"],
+        answer: 2 // Correct answer is "2. Hyper Text Markup Language"
+    },
+    {
+        question: "Which of the following is a JavaScript data type?",
+        options: ["1. Float", "2. Boolean", "3. Stringify"],
+        answer: 2 // Correct answer is "2. Boolean"
+    },
+    {
+        question: "What does CSS stand for?",
+        options: ["1. Computer Style Sheets", "2. Cascading Style Sheets", "3. Creative Style Sheets"],
+        answer: 2 // Correct answer is "2. Cascading Style Sheets"
+    },
+    {
+        question: "What is the result of the expression '2 + 2' in JavaScript?",
+        options: ["1. 4", "2. 22", "3. Error"],
+        answer: 1 // Correct answer is "1. 4"
+    },
+    {
+        question: "Which built-in method adds one or more elements to the end of an array and returns the new length?",
+        options: ["1. push()", "2. pop()", "3. concat()"],
+        answer: 1 // Correct answer is "1. push()"
+    },
+    {
+        question: "What is the correct syntax for a 'for' loop in JavaScript?",
+        options: ["1. for (i = 0; i <= 5; i++)", "2. for (i <= 5; i++)", "3. for (i = 0; i++)"],
+        answer: 1 // Correct answer is "1. for (i = 0; i <= 5; i++)"
+    },
+    {
+        question: "Which of the following is used to declare a variable in JavaScript?",
+        options: ["1. var", "2. int", "3. let"],
+        answer: 1 // Correct answer is "1. var"
+    },
+    {
+        question: "What is the purpose of the 'addEventListener' method in JavaScript?",
+        options: ["1. To remove an event listener", "2. To add a new HTML element", "3. To attach an event handler to an element"],
+        answer: 3 // Correct answer is "3. To attach an event handler to an element"
+    },
+    {
+        question: "What does JSON stand for?",
+        options: ["1. JavaScript Object Notation", "2. JavaScript Object Navigator", "3. JavaScript Oriented Networking"],
+        answer: 1 // Correct answer is "1. JavaScript Object Notation"
+    },
+    {
+        question: "In JavaScript, which operator is used for equality comparison without type coercion?",
+        options: ["1. ===", "2. ==", "3. ="],
+        answer: 1 // Correct answer is "1. ==="
+    },
+    {
+        question: "Which HTML tag is used to create an unordered list?",
+        options: ["1. <ul>", "2. <li>", "3. <ol>"],
+        answer: 1 // Correct answer is "1. <ul>"
+    },
+    {
+        question: "What is the purpose of the 'localStorage' object in JavaScript?",
+        options: ["1. To store data on the server", "2. To store data on the client's computer", "3. To validate form inputs"],
+        answer: 2 // Correct answer is "2. To store data on the client's computer"
+    },
+    {
+        question: "Which of the following is a valid way to comment out multiple lines in JavaScript?",
+        options: ["1. // Comment", "2. /* Comment */", "3. <!-- Comment -->"],
+        answer: 2 // Correct answer is "2. /* Comment */"
+    },
+    {
+        question: "What is the main purpose of CSS media queries?",
+        options: ["1. To add animations to a website", "2. To change the background color of a webpage", "3. To make web pages responsive to different screen sizes"],
+        answer: 3 // Correct answer is "3. To make web pages responsive to different screen sizes"
+    },
+    {
+        question: "Which of the following is a popular JavaScript library for building user interfaces?",
+        options: ["1. React", "2. Angular", "3. Vue.js"],
+        answer: 1 // Correct answer is "1. React"
+    },
+    {
+        question: "What does the 'fetch' API in JavaScript primarily handle?",
+        options: ["1. HTTP requests and responses", "2. Styling web pages", "3. Playing audio and video"],
+        answer: 1 // Correct answer is "1. HTTP requests and responses"
+    },
+    {
+        question: "What is the purpose of the 'try...catch' statement in JavaScript?",
+        options: ["1. To create loops", "2. To handle exceptions and errors", "3. To define functions"],
+        answer: 2 // Correct answer is "2. To handle exceptions and errors"
+    },
+    {
+        question: "Which JavaScript method is used to remove the last element from an array and return it?",
+        options: ["1. splice()", "2. shift()", "3. pop()"],
+        answer: 3 // Correct answer is "3. pop()"
+    },
+    {
+        question: "What does the 'NaN' value represent in JavaScript?",
+        options: ["1. Not a Number", "2. Null", "3. Negative Number"],
+        answer: 1 // Correct answer is "1. Not a Number"
+    }
+    // Add more questions below...
+
+            // Add more questions below...
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+
+        const questionElement = document.getElementById("question");
+        const optionsElement = document.getElementById("options");
+        const nextButton = document.getElementById("next-btn");
+        const submitButton = document.getElementById("submit-btn");
+        const resultElement = document.getElementById("result");
+        const resultModal = document.getElementById("result-modal");
+
+        function loadQuestion() {
+            const question = quizData[currentQuestion];
+            questionElement.textContent = question.question;
+            optionsElement.innerHTML = "";
+
+            for (let i = 0; i < question.options.length; i++) {
+                const option = document.createElement("label");
+                option.innerHTML = `
+                    <input type="radio" name="option" value="${i}">
+                    ${question.options[i]}
+                `;
+                optionsElement.appendChild(option);
+            }
+        }
+
+        function checkAnswer() {
+            const selectedOption = document.querySelector('input[name="option"]:checked');
+            if (!selectedOption) return;
+
+            const userAnswer = parseInt(selectedOption.value);
+            if (userAnswer === quizData[currentQuestion].answer) {
+                score++;
+            }
+        }
+
+        function showResult() {
+            questionElement.textContent = "";
+            optionsElement.innerHTML = "";
+            nextButton.style.display = "none";
+            submitButton.style.display = "none";
+            resultElement.textContent = ""; // Clear any previous result text
+
+            resultElement.textContent = `You scored ${score} out of ${quizData.length} questions.`;
+
+            // Display the result modal
+            resultModal.style.display = "block";
+        }
+
+        nextButton.addEventListener("click", () => {
+            checkAnswer();
+            currentQuestion++;
+
+            if (currentQuestion < quizData.length) {
+                loadQuestion();
+            } else {
+                nextButton.style.display = "none";
+                submitButton.style.display = "block";
+            }
+        });
+
+        submitButton.addEventListener("click", () => {
+            checkAnswer();
+            showResult();
+        });
+
+        loadQuestion();
+
+        const dismissButton = document.getElementById("dismiss-btn");
+
+function restartQuiz() {
+    // Reset the quiz state
+    currentQuestion = 0;
+    score = 0;
+
+    // Hide the result modal
+    resultModal.style.display = "none";
+
+    // Reload the first question
+    loadQuestion();
+
+    // Display the next button
+    nextButton.style.display = "block";
+}
+
+dismissButton.addEventListener("click", restartQuiz);
+
+    </script>
+</body>
+</html>
